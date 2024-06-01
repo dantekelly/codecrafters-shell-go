@@ -77,6 +77,13 @@ func handleCommand(s string) {
 		}
 
 		Print("type: missing argument\n")
+	case "pwd":
+		dir, err := os.Getwd()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		Print("%s\n", dir)
 	case "echo":
 		str := strings.Join(args, " ")
 		Print("%s\n", str)
