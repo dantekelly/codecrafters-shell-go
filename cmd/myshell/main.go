@@ -2,7 +2,9 @@ package main
 
 import (
 	"bufio"
+	"log"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 )
@@ -38,6 +40,17 @@ func searchEnvPath(command string) (bool, string) {
 	return false, ""
 }
 
+func executeProgram(p string, args []string) {
+	command := exec.Command(p, args...)
+	command.Stderr = os.Stderr
+	command.Stdout = os.Stdout
+
+	err := command.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func handleCommand(s string) {
 	// Remove the newline character from the command
 	s = strings.TrimSuffix(s, "\n")
@@ -70,6 +83,18 @@ func handleCommand(s string) {
 	case "exit":
 		os.Exit(0)
 	default:
+		ok, p := searchEnvPath(command)
+		if ok {
+			executeProgram(p, args)
+
+			return
+		}
+		if _, err := os.Stat(command); err == nil {
+			executeProgram(command, args)
+
+			return
+		}
+
 		Print("%s: command not found\n", command)
 	}
 }
