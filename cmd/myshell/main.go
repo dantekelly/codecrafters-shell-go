@@ -29,6 +29,9 @@ func handleCommand(command string) {
 	command = command[:len(command)-1]
 
 	switch command {
+	case "exit 0":
+		os.Exit(0)
+
 	default:
 		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
 	}
