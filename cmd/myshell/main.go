@@ -14,5 +14,21 @@ func main() {
 	fmt.Fprint(os.Stdout, "$ ")
 
 	// Wait for user input
-	bufio.NewReader(os.Stdin).ReadString('\n')
+	command, err := bufio.NewReader(os.Stdin).ReadString('\n')
+	if err != nil {
+		fmt.Fprintf(os.Stdout, "Error reading input: %s", err)
+	}
+
+	// Handle the command
+	handleCommand(command)
+}
+
+func handleCommand(command string) {
+	// Remove the newline character from the command
+	command = command[:len(command)-1]
+
+	switch command {
+	default:
+		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
+	}
 }
