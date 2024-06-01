@@ -35,6 +35,10 @@ func handleCommand(s string) {
 func cdCommand(args []string) {
 	command := args[0]
 
+	if strings.TrimSpace(command) == "~" {
+		command = os.Getenv("HOME")
+	}
+
 	if err := os.Chdir(command); err != nil {
 		Print("%s: No such file or directory\n", command)
 	}
