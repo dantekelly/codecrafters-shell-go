@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"fmt"
 	"os"
 	"strings"
 )
@@ -13,11 +12,11 @@ func main() {
 
 	reader := bufio.NewReader(os.Stdin)
 	for {
-		fmt.Fprint(os.Stdout, "$ ")
+		Print("$ ")
 		// Wait for user input
 		command, err := reader.ReadString('\n')
 		if err != nil {
-			fmt.Fprintf(os.Stdout, "Error reading input: %s", err)
+			Print("Error reading input: %s", err)
 		}
 
 		// Handle the command
@@ -29,15 +28,28 @@ func handleCommand(s string) {
 	// Remove the newline character from the command
 	s = strings.TrimSuffix(s, "\n")
 	command := strings.Split(s, " ")[0]
-	args := strings.Split(s, " ")
+	args := strings.Split(s, " ")[1:]
 
 	switch command {
+	case "type":
+		if len(args) >= 1 {
+			switch args[0] {
+			case "type", "echo", "exit":
+				Print("%s is a shell builtin\n", args[0])
+			default:
+				Print("%s not found\n", args[0])
+			}
+
+			return
+		}
+
+		Print("type: missing argument\n")
 	case "echo":
-		str := strings.Join(args[1:], " ")
-		fmt.Fprintf(os.Stdout, "%s\n", str)
+		str := strings.Join(args, " ")
+		Print("%s\n", str)
 	case "exit":
 		os.Exit(0)
 	default:
-		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
+		Print("%s: command not found\n", command)
 	}
 }
