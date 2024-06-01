@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"strings"
 )
 
 func main() {
@@ -24,14 +25,18 @@ func main() {
 	}
 }
 
-func handleCommand(command string) {
+func handleCommand(s string) {
 	// Remove the newline character from the command
-	command = command[:len(command)-1]
+	s = strings.TrimSuffix(s, "\n")
+	command := strings.Split(s, " ")[0]
+	args := strings.Split(s, " ")
 
 	switch command {
-	case "exit 0":
+	case "echo":
+		str := strings.Join(args[1:], " ")
+		fmt.Fprintf(os.Stdout, "%s\n", str)
+	case "exit":
 		os.Exit(0)
-
 	default:
 		fmt.Fprintf(os.Stdout, "%s: command not found\n", command)
 	}
