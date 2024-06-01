@@ -3,6 +3,7 @@ package main
 import (
 	"bufio"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -24,6 +25,19 @@ func main() {
 	}
 }
 
+func searchEnvPath(command string) (bool, string) {
+	paths := strings.Split(os.Getenv("PATH"), ":")
+
+	for _, path := range paths {
+		fp := filepath.Join(path, command)
+		if _, err := os.Stat(fp); err == nil {
+			return true, fp
+		}
+	}
+
+	return false, ""
+}
+
 func handleCommand(s string) {
 	// Remove the newline character from the command
 	s = strings.TrimSuffix(s, "\n")
@@ -37,6 +51,12 @@ func handleCommand(s string) {
 			case "type", "echo", "exit":
 				Print("%s is a shell builtin\n", args[0])
 			default:
+				ok, p := searchEnvPath(args[0])
+				if ok {
+					Print("%s is %s\n", args[0], p)
+					return
+				}
+
 				Print("%s not found\n", args[0])
 			}
 
